@@ -1,5 +1,5 @@
 .Form {
-  width: 18%;
+  width: 10%;
 }
 
 .Form input[type="submit"] {
@@ -10,4 +10,18 @@
   border-bottom: 1px solid gray;
   color: white;
   width: 45%;
+  position: relative;
+  left: 50px;
+}
+
+@media only screen and (max-width: 400px) {
+  .Form {
+    width: 20%;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .Form {
+    width: 40%;
+  }
 }

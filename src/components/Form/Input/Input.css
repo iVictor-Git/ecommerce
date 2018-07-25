@@ -1,13 +1,16 @@
 .Input {
+  margin: 0 auto;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  width: 85%;
-  margin-bottom: 7px;
+  width: 90%;
+  margin-bottom: 9px;
 }
 .Input label {
   font-size: 0.75rem;
+  display: flex;
+  justify-content: left;
 }
 
 .Input input {

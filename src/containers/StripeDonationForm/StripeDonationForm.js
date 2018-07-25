@@ -4,6 +4,8 @@ import Form from "../../components/Form/Form";
 import { cardData } from "../../config";
 import styles from "./StripeDonationForm.css";
 
+import { donationData } from "./StripeFormDonation.config";
+
 class StripeDonationForm extends Component {
   constructor(props) {
     super(props);
@@ -52,8 +54,9 @@ class StripeDonationForm extends Component {
   render() {
     return (
       <div className={styles.StripeDonationForm}>
+        <section>{donationData.description}</section>
         <Form
-          name="Donations"
+          name={donationData.name}
           data={cardData}
           onChange={this.onChangeHander}
           state={this.state}

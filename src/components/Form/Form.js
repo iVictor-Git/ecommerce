@@ -18,7 +18,7 @@ const Form = props => {
     <form className={styles.Form}>
       <fieldset>
         <legend>{props.name} </legend>
-        {elements}
+        <div>{elements}</div>
         <input type="submit" value="Donate" />
       </fieldset>
     </form>
