@@ -14,41 +14,66 @@ class StripeDonationForm extends Component {
       cardNumber: "",
       cvv: "",
       expiration: "",
-      amount: ""
+      amount: "0.00"
     };
   }
 
   onChangeHander = event => {
     const { name, value } = event.target;
-    this.setState(
-      {
-        ...this.state,
-        [name]: value
-      },
-      () => {
-        this.formatDate();
+    this.setState({ [name]: value }, () => {
+      switch (name) {
+        case "expiration":
+          return this.setState({ ...this.state, ...this.formatDate(name) });
+        case "amount":
+          return this.setState({ ...this.state, ...this.formatAmount(name) });
+        default:
+          return;
       }
-    );
+    });
   };
 
-  formatDate = () => {
-    this.setState(prevState => {
-      let joinedExpiration = prevState.expiration;
-      if (prevState.expiration.includes("/")) {
-        joinedExpiration = prevState.expiration.split("/").join("");
-      }
-      const newExpiration = joinedExpiration;
-      console.log(joinedExpiration.length > 2);
-      if (joinedExpiration.length > 2) {
-        const month = joinedExpiration.substr(0, 2);
-        const year = joinedExpiration.substr(2, 4);
-        const newExpiration = `${month}/${year}`;
-        return { expiration: newExpiration };
-      }
-      return {
-        expiration: newExpiration
-      };
-    });
+  formatDate = name => {
+    let expiration = this.state[name]
+      .split("")
+      .filter(character => !isNaN(character))
+      .join("");
+
+    if (expiration.includes("/"))
+      expiration = this.state[name].split("/").join("");
+    const newExpiration = expiration;
+    if (expiration.length > 2) {
+      const month = expiration.substr(0, 2);
+      const year = expiration.substr(2, 4);
+      const newExpiration = `${month}/${year}`;
+      return { expiration: newExpiration };
+    }
+    return {
+      expiration: newExpiration
+    };
+  };
+
+  formatAmount = name => {
+    let amount = this.state[name]
+      .split("")
+      .filter(char => !isNaN(char))
+      .join("")
+      .split(".")
+      .join("");
+
+    if (parseInt(amount, 10) === 0) amount = "000";
+
+    if (amount.length < 3) amount = "0" + amount;
+
+    while (amount.startsWith("0") && amount.length > 3) {
+      amount = amount.substring(1);
+    }
+    const integer = amount.substring(0, amount.length - 2);
+    const decimal = amount.substring(amount.length - 2);
+    let formattedAmount = `${integer}.${decimal}`;
+
+    return {
+      amount: formattedAmount
+    };
   };
 
   render() {
