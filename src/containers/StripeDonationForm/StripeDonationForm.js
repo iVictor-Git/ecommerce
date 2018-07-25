@@ -6,6 +6,8 @@ import styles from "./StripeDonationForm.css";
 
 import { donationData } from "./StripeFormDonation.config";
 
+import { retrieveOnlyNumbers } from "../../functions/retrieveOnlyNumbers";
+
 class StripeDonationForm extends Component {
   constructor(props) {
     super(props);
@@ -26,6 +28,8 @@ class StripeDonationForm extends Component {
           return this.setState({ ...this.state, ...this.formatDate(name) });
         case "amount":
           return this.setState({ ...this.state, ...this.formatAmount(name) });
+        case "cvv":
+          return this.setState({ ...this.state, ...this.formatCvv(name) });
         default:
           return;
       }
@@ -33,18 +37,13 @@ class StripeDonationForm extends Component {
   };
 
   formatDate = name => {
-    let expiration = this.state[name]
-      .split("")
-      .filter(character => !isNaN(character))
-      .join("");
+    let expiration = retrieveOnlyNumbers(this.state[name]);
 
-    if (expiration.includes("/"))
-      expiration = this.state[name].split("/").join("");
-    const newExpiration = expiration;
+    let newExpiration = expiration;
     if (expiration.length > 2) {
       const month = expiration.substr(0, 2);
       const year = expiration.substr(2, 4);
-      const newExpiration = `${month}/${year}`;
+      newExpiration = `${month}/${year}`;
       return { expiration: newExpiration };
     }
     return {
@@ -52,13 +51,13 @@ class StripeDonationForm extends Component {
     };
   };
 
+  formatCvv = name => {
+    let cvv = retrieveOnlyNumbers(this.state[name]);
+    return { cvv };
+  };
+
   formatAmount = name => {
-    let amount = this.state[name]
-      .split("")
-      .filter(char => !isNaN(char))
-      .join("")
-      .split(".")
-      .join("");
+    let amount = retrieveOnlyNumbers(this.state[name]);
 
     if (parseInt(amount, 10) === 0) amount = "000";
 
