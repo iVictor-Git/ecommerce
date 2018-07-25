@@ -15,7 +15,7 @@ const Form = props => {
     );
   });
   return (
-    <form className={styles.Form}>
+    <form className={styles.Form} onSubmit={event => props.onSubmit(event)}>
       <fieldset>
         <legend>{props.name} </legend>
         <div>{elements}</div>

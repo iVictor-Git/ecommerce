@@ -8,6 +8,14 @@ import { donationData } from "./StripeFormDonation.config";
 
 import { retrieveOnlyNumbers } from "../../functions/retrieveOnlyNumbers";
 
+// TODOs:
+// 1. reject non-numeric in card number
+// 2. Depending on card type
+//    3. Determine card type
+//      4. Validate card number
+// 4. Space according numbers according to card type
+//
+
 class StripeDonationForm extends Component {
   constructor(props) {
     super(props);
@@ -75,12 +83,21 @@ class StripeDonationForm extends Component {
     };
   };
 
+  onSubmitHandler = event => {
+    event.preventDefault();
+    console.log(`You've submitted the following information:`);
+    Object.keys(this.state).forEach(state => {
+      console.log(`${state}: ${this.state[state]}`);
+    });
+  };
+
   render() {
     return (
       <div className={styles.StripeDonationForm}>
         <div>
           <section>{donationData.description}</section>
           <Form
+            onSubmit={this.onSubmitHandler}
             name={donationData.name}
             data={cardData}
             onChange={this.onChangeHander}
