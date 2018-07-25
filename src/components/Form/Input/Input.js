@@ -7,12 +7,11 @@ const Input = props => {
       case "textarea":
         return <textarea {...props} />;
       default:
-        return <input {...props} maxLength={props.name === "cvv" ? 3 : 16} />;
+        return <input {...props} />;
     }
   };
 
   const element = generateInputElement();
-  console.log("input: ", props.value);
 
   return (
     <div className={styles.Input}>

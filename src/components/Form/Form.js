@@ -4,7 +4,6 @@ import Input from "./Input/Input";
 import styles from "./Form.css";
 
 const Form = props => {
-  console.log("Form", props.state);
   const elements = props.data.map(input => {
     return (
       <Input
@@ -18,7 +17,7 @@ const Form = props => {
   return (
     <form className={styles.Form}>
       <fieldset>
-        <legend>{props.name}: </legend>
+        <legend>{props.name} </legend>
         {elements}
         <input type="submit" value="Donate" />
       </fieldset>
