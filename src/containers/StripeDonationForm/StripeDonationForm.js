@@ -54,13 +54,15 @@ class StripeDonationForm extends Component {
   render() {
     return (
       <div className={styles.StripeDonationForm}>
-        <section>{donationData.description}</section>
-        <Form
-          name={donationData.name}
-          data={cardData}
-          onChange={this.onChangeHander}
-          state={this.state}
-        />
+        <div>
+          <section>{donationData.description}</section>
+          <Form
+            name={donationData.name}
+            data={cardData}
+            onChange={this.onChangeHander}
+            state={this.state}
+          />
+        </div>
       </div>
     );
   }
