@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./Input.css";
 
 const Input = props => {
   const generateInputElement = () => {
@@ -6,7 +7,7 @@ const Input = props => {
       case "textarea":
         return <textarea {...props} />;
       default:
-        return <input {...props} />;
+        return <input {...props} maxLength={props.name === "cvv" ? 3 : 16} />;
     }
   };
 
@@ -14,10 +15,9 @@ const Input = props => {
   console.log("input: ", props.value);
 
   return (
-    <div>
-      <label htmlFor={props.id}>
-        {props.field}: {element}
-      </label>
+    <div className={styles.Input}>
+      <label htmlFor={props.id}>{props.field}:</label>
+      {element}
     </div>
   );
 };
