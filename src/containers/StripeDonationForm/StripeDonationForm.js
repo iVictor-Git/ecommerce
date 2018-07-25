@@ -37,7 +37,15 @@ class StripeDonationForm extends Component {
         case "amount":
           return this.setState({ ...this.state, ...this.formatAmount(name) });
         case "cvv":
-          return this.setState({ ...this.state, ...this.formatCvv(name) });
+          return this.setState({
+            ...this.state,
+            ...this.formatNumbersOnly(name)
+          });
+        case "cardNumber":
+          return this.setState({
+            ...this.state,
+            ...this.formatNumbersOnly(name)
+          });
         default:
           return;
       }
@@ -59,9 +67,9 @@ class StripeDonationForm extends Component {
     };
   };
 
-  formatCvv = name => {
-    let cvv = retrieveOnlyNumbers(this.state[name]);
-    return { cvv };
+  formatNumbersOnly = name => {
+    let state = retrieveOnlyNumbers(this.state[name]);
+    return { [name]: state };
   };
 
   formatAmount = name => {
