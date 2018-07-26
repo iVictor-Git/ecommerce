@@ -14,7 +14,6 @@ import { retrieveOnlyNumbers } from "../../functions/retrieveOnlyNumbers";
 //    3. Determine card type
 //      4. Validate card number
 // 4. Space according numbers according to card type
-//
 
 class StripeDonationForm extends Component {
   constructor(props) {
@@ -24,7 +23,9 @@ class StripeDonationForm extends Component {
       cardNumber: "",
       cvv: "",
       expiration: "",
-      amount: "0.00"
+      amount: "0.00",
+      validCard: null,
+      cardType: ""
     };
   }
 
@@ -42,10 +43,30 @@ class StripeDonationForm extends Component {
             ...this.formatNumbersOnly(name)
           });
         case "cardNumber":
-          return this.setState({
-            ...this.state,
-            ...this.formatNumbersOnly(name)
-          });
+          return this.setState(
+            {
+              ...this.state,
+              ...this.formatNumbersOnly(name)
+            },
+            () => {
+              this.setState(
+                {
+                  ...this.state,
+                  validCard:
+                    this.state.cardNumber.length > 12
+                      ? this.validateCreditCard(this.state.cardNumber)
+                      : false,
+                  cardType:
+                    this.state.cardNumber.length > 2
+                      ? this.determineCardType()
+                      : null
+                },
+                () => {
+                  console.log(this.state);
+                }
+              );
+            }
+          );
         default:
           return;
       }
@@ -91,12 +112,48 @@ class StripeDonationForm extends Component {
     };
   };
 
+  determineCardType = () => {};
+
   onSubmitHandler = event => {
     event.preventDefault();
     console.log(`You've submitted the following information:`);
     Object.keys(this.state).forEach(state => {
       console.log(`${state}: ${this.state[state]}`);
     });
+  };
+
+  validateCreditCard = value => {
+    let nCheck = 0,
+      // nCheck => numberCheck
+      nDigit = 0,
+      // nDigit => numberDigit
+      bEven = false;
+    // bEven => booleanEven
+    value = value.replace(/\D/g, ""); // regex matching non-digit characters => [^0-9] for entire string
+
+    for (let n = value.length - 1; n >= 0; n--) {
+      // loops from n, starting at string length - 1 => 0
+      // 6, 5, 4, 3, 2, 1, 0
+      let cDigit = value.charAt(n);
+      // characterDigit => is the character at whatever index per above
+      nDigit = parseInt(cDigit, 10);
+      // numberDigit is reassigned to an int base 10 using cdigit
+
+      if (bEven) {
+        // skipped first iteration, active next iteration, then skipped, etc...
+        if ((nDigit *= 2) > 9) {
+          // logic here is if number is 5 => 5 * 2 => 10 => 10 - 9 => 1
+          // 6 * 2 => 12 => 12 - 9 => 3
+          // 7 * 2 => 14 => 12 - 9 => 5
+          nDigit -= 9;
+        }
+      }
+
+      nCheck += nDigit;
+      bEven = !bEven;
+    }
+
+    return nCheck % 10 === 0;
   };
 
   render() {
