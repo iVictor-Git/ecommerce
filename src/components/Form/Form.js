@@ -11,6 +11,9 @@ const Form = props => {
         {...input}
         onChange={event => props.onChange(event)}
         value={props.state[input.name]}
+        error={
+          input.name === "cardNumber" && !props.state.validCard ? "true" : null
+        }
       />
     );
   });

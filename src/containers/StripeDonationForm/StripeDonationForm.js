@@ -24,7 +24,7 @@ class StripeDonationForm extends Component {
       cvv: "",
       expiration: "",
       amount: "0.00",
-      validCard: null,
+      validCard: true,
       cardType: ""
     };
   }
@@ -49,22 +49,17 @@ class StripeDonationForm extends Component {
               ...this.formatNumbersOnly(name)
             },
             () => {
-              this.setState(
-                {
-                  ...this.state,
-                  validCard:
-                    this.state.cardNumber.length > 12
-                      ? this.validateCreditCard(this.state.cardNumber)
-                      : false,
-                  cardType:
-                    this.state.cardNumber.length > 2
-                      ? this.determineCardType()
-                      : null
-                },
-                () => {
-                  console.log(this.state);
-                }
-              );
+              this.setState({
+                ...this.state,
+                validCard:
+                  this.state.cardNumber.length > 12
+                    ? this.validateCreditCard(this.state.cardNumber)
+                    : false,
+                cardType:
+                  this.state.cardNumber.length > 2
+                    ? this.determineCardType()
+                    : null
+              });
             }
           );
         default:
