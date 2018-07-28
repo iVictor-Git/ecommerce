@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import Form from "../../components/Form/Form";
 
-import { cardData } from "../../config";
 import styles from "./StripeDonationForm.css";
 
-import { donationData } from "./StripeFormDonation.config";
+import { donationData, cardData } from "./StripeFormDonation.config";
 
 import { retrieveOnlyNumbers } from "../../functions/retrieveOnlyNumbers";
 
@@ -19,91 +18,156 @@ class StripeDonationForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cardName: "",
-      cardNumber: "",
-      cvv: "",
-      expiration: "",
-      amount: "0.00",
-      validCard: true,
-      cardType: ""
+      card: {
+        name: {
+          value: "",
+          error: false,
+          errorMessage: ""
+        },
+        number: {
+          value: "",
+          error: false,
+          errorMessage: ""
+        },
+        expiration: {
+          value: "",
+          error: false,
+          errorMessage: ""
+        },
+        cvv: {
+          value: "",
+          error: false,
+          errorMessage: ""
+        },
+        amount: {
+          value: "0.00",
+          error: false,
+          errorMessage: ""
+        },
+        valid: {
+          value: "",
+          error: false,
+          errorMessage: ""
+        },
+        type: {
+          value: "",
+          error: false,
+          errorMessage: ""
+        }
+      }
     };
   }
 
-  onChangeHander = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value }, () => {
-      switch (name) {
-        case "expiration":
-          return this.setState({ ...this.state, ...this.formatDate(name) });
-        case "amount":
-          return this.setState({ ...this.state, ...this.formatAmount(name) });
-        case "cvv":
-          return this.setState({
-            ...this.state,
-            ...this.formatNumbersOnly(name)
-          });
-        case "cardNumber":
-          return this.setState(
-            {
-              ...this.state,
-              ...this.formatNumbersOnly(name)
-            },
-            () => {
-              this.setState({
-                ...this.state,
-                validCard:
-                  this.state.cardNumber.length > 12
-                    ? this.validateCreditCard(this.state.cardNumber)
-                    : false,
-                cardType:
-                  this.state.cardNumber.length > 2
-                    ? this.determineCardType()
-                    : null
-              });
-            }
-          );
-        default:
-          return;
+  ReadyTheState = (name, fn) => {
+    const card = { ...this.state.card };
+    card[name] = fn(name);
+    return card;
+  };
+
+  ChangeTheState = name => {
+    this.setState({
+      card: {
+        ...name
       }
     });
   };
 
-  formatDate = name => {
-    let expiration = retrieveOnlyNumbers(this.state[name]);
+  FormatState = (name, fn) => {
+    this.ChangeTheState(this.ReadyTheState(name, fn));
+  };
 
-    let newExpiration = expiration;
-    if (expiration.length > 2) {
-      const month = expiration.substr(0, 2);
-      const year = expiration.substr(2, 4);
+  onChangeHander = event => {
+    const { name, value } = event.target;
+    const state = {
+      ...this.state.card,
+      [name]: {
+        ...this.state.card[name],
+        value
+      }
+    };
+
+    this.setState(
+      {
+        card: { ...state }
+      },
+      () => {
+        switch (name) {
+          case "expiration":
+            return this.FormatState(name, () => this.formatDate(name));
+          case "amount":
+            return this.FormatState(name, () => this.formatAmount(name));
+          case "cvv":
+            return this.FormatState(name, () => this.formatNumbersOnly(name));
+          case "cardNumber":
+            return this.setState(
+              {
+                ...this.state,
+                ...this.formatNumbersOnly(name)
+              },
+              () => {
+                this.setState({
+                  ...this.state,
+                  validCard:
+                    this.state.cardNumber.length > 12
+                      ? this.validateCreditCard(this.state.cardNumber)
+                      : false,
+                  cardType:
+                    this.state.cardNumber.length > 2
+                      ? this.determineCardType()
+                      : null
+                });
+              }
+            );
+          default:
+            return;
+        }
+      }
+    );
+  };
+
+  formatDate = name => {
+    let expiration = { ...this.state.card[name] };
+    expiration.value = retrieveOnlyNumbers(expiration.value);
+
+    let newExpiration = expiration.value;
+    if (newExpiration.length > 2) {
+      const month = newExpiration.substr(0, 2);
+      const year = newExpiration.substr(2, 4);
       newExpiration = `${month}/${year}`;
-      return { expiration: newExpiration };
+      expiration.value = newExpiration;
+      return { ...expiration };
     }
     return {
-      expiration: newExpiration
+      ...expiration
     };
   };
 
   formatNumbersOnly = name => {
-    let state = retrieveOnlyNumbers(this.state[name]);
-    return { [name]: state };
+    const card = this.state.card[name];
+    const value = retrieveOnlyNumbers(this.state.card[name].value);
+    card.value = value;
+    console.log(card);
+    return { ...card };
   };
 
   formatAmount = name => {
-    let amount = retrieveOnlyNumbers(this.state[name]);
+    const card = this.state.card[name];
+    console.log(card);
+    let amount = retrieveOnlyNumbers(this.state.card[name].value);
 
-    if (parseInt(amount, 10) === 0) amount = "000";
+    if (parseInt(amount, 10) === 0 || !amount.length) amount = "000";
 
-    if (amount.length < 3) amount = "0" + amount;
-
-    while (amount.startsWith("0") && amount.length > 3) {
+    while (amount.startsWith("0") && amount.length > 2) {
       amount = amount.substring(1);
     }
+    if (amount.length <= 2) amount = "0" + amount;
     const integer = amount.substring(0, amount.length - 2);
     const decimal = amount.substring(amount.length - 2);
-    let formattedAmount = `${integer}.${decimal}`;
-
+    const formattedAmount = `${integer}.${decimal}`;
+    card.value = formattedAmount;
+    console.log(card);
     return {
-      amount: formattedAmount
+      ...card
     };
   };
 
@@ -161,7 +225,7 @@ class StripeDonationForm extends Component {
             name={donationData.name}
             data={cardData}
             onChange={this.onChangeHander}
-            state={this.state}
+            state={this.state.card}
           />
         </div>
       </div>

@@ -10,7 +10,7 @@ const Form = props => {
         key={input.id}
         {...input}
         onChange={event => props.onChange(event)}
-        value={props.state[input.name]}
+        value={props.state[input.name].value}
         error={
           input.name === "cardNumber" && !props.state.validCard ? "true" : null
         }

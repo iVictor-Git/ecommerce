@@ -7,7 +7,6 @@ const Input = props => {
     outlineColor: "red",
     borderRadius: 0
   };
-  console.log(props.name, props.error);
 
   const generateInputElement = () => {
     switch (props.element) {
