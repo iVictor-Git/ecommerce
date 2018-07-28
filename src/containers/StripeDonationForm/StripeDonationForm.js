@@ -98,25 +98,31 @@ class StripeDonationForm extends Component {
             return this.FormatState(name, () => this.formatAmount(name));
           case "cvv":
             return this.FormatState(name, () => this.formatNumbersOnly(name));
-          case "cardNumber":
+          case "number":
+            const card = this.ReadyTheState(name, () =>
+              this.formatNumbersOnly(name)
+            );
             return this.setState(
               {
-                ...this.state,
-                ...this.formatNumbersOnly(name)
-              },
-              () => {
-                this.setState({
-                  ...this.state,
-                  validCard:
-                    this.state.cardNumber.length > 12
-                      ? this.validateCreditCard(this.state.cardNumber)
-                      : false,
-                  cardType:
-                    this.state.cardNumber.length > 2
-                      ? this.determineCardType()
-                      : null
-                });
+                card: {
+                  ...card
+                }
               }
+              // ,
+              // () => {
+              //   this.setState({
+              //     card: {
+              //       valid:
+              //         this.state.card.number.length > 12
+              //           ? this.validateCreditCard(this.state.card.number)
+              //           : false,
+              //       type:
+              //         this.state.card.number.length > 2
+              //           ? this.determineCardType()
+              //           : null
+              //     }
+              //   });
+              // }
             );
           default:
             return;
@@ -146,7 +152,6 @@ class StripeDonationForm extends Component {
     const card = this.state.card[name];
     const value = retrieveOnlyNumbers(this.state.card[name].value);
     card.value = value;
-    console.log(card);
     return { ...card };
   };
 
